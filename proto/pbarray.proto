@@ -1,0 +1,29 @@
+package pbarray;
+
+message Head {
+  repeated int32 items = 1;
+}
+
+message Meta {
+  repeated MetaItem items = 1;
+}
+
+message MetaItem {
+  optional string filename = 1;
+  optional int32 width = 2;
+  optional int32 height = 3;
+  optional int32 label = 4;
+  repeated Box boxes = 5;
+}
+
+message DataItem {
+  optional bytes jpeg = 1;
+}
+
+message Box {
+  optional int32 start_x = 1;
+  optional int32 start_y = 2;
+  optional int32 end_x = 3;
+  optional int32 end_y = 4;
+  optional int32 label = 5;
+}
