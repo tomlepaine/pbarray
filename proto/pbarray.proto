@@ -1,19 +1,20 @@
 package pbarray;
 
-message Head {
+message MetaHead {
   repeated int32 items = 1;
 }
 
-message Meta {
-  repeated MetaItem items = 1;
+message DataHead {
+  repeated int32 items = 1;
 }
 
 message MetaItem {
   optional string filename = 1;
   optional int32 width = 2;
   optional int32 height = 3;
-  optional int32 label = 4;
+  optional int32 label_id = 4;
   repeated Box boxes = 5;
+  optional string label_name = 6;
 }
 
 message DataItem {

@@ -7,7 +7,6 @@ import pbarray_pb2
 
 class PBArrayWriter(object):
     '''Helper class to create PBArray `database`.
-
     Parameters
     ----------
     directory : str
@@ -15,30 +14,16 @@ class PBArrayWriter(object):
     '''
     def __init__(self, directory):
         self.directory = directory
-        self.data = []
-        self.meta = pbarray_pb2.Meta()
-        self.head = pbarray_pb2.Head()
+        self.meta_head = pbarray_pb2.MetaHead()
+        self.data_head = pbarray_pb2.DataHead()
 
-        self.head_path = os.path.join(self.directory, 'HEAD')
+        self.meta_head_path = os.path.join(self.directory, 'METAHEAD')
+        self.data_head_path = os.path.join(self.directory, 'DATAHEAD')
         self.meta_path = os.path.join(self.directory, 'META')
         self.data_path = os.path.join(self.directory, 'DATA')
 
-    def Write(self):
-        '''Write the `database` to disk.
-        '''
-        with open(self.head_path, 'wb') as f:
-            f.write(self.head.SerializeToString())
-
-        with open(self.meta_path, 'wb') as f:
-            f.write(self.meta.SerializeToString())
-
-        with open(self.data_path, 'wb') as f:
-            for data in self.data:
-                f.write(data.SerializeToString())
-
     def Put(self, data, meta=None):
         '''Add items to the `database`.
-
         Parameters
         ----------
         data : DataItem
@@ -48,15 +33,30 @@ class PBArrayWriter(object):
         '''
         if meta==None:
             meta = pbarray_pb2.MetaItem()
-        meta_list = [meta]
-        self.meta.items.extend(meta_list)
-        self.data.append(data)
-        offset = data.ByteSize()
-        self.head.items.append(offset)
 
+        meta_offset = meta.ByteSize()
+        self.meta_head.items.append(meta_offset)
+        
+        data_offset = data.ByteSize()
+        self.data_head.items.append(data_offset)
+
+        # Write items
+        with open(self.meta_path, 'ab') as f:
+            f.write(meta.SerializeToString())
+
+        with open(self.data_path, 'ab') as f:
+            f.write(data.SerializeToString())
+                
+    def Close(self):
+        # Rewrite heads
+        with open(self.meta_head_path, 'wb') as f:
+            f.write(self.meta_head.SerializeToString())
+            
+        with open(self.data_head_path, 'wb') as f:
+            f.write(self.data_head.SerializeToString())
+            
 class PBArray(object):
     '''Helper class to get data from PBArray `database`.
-
     Parameters
     ----------
     directory : str
@@ -64,31 +64,36 @@ class PBArray(object):
     '''
     def __init__(self, directory):
         self.directory = directory
-        self.data = []
-        self.meta = pbarray_pb2.Meta()
 
-        self.head_path = os.path.join(self.directory, 'HEAD')
+        self.meta_head_path = os.path.join(self.directory, 'METAHEAD')
+        self.data_head_path = os.path.join(self.directory, 'DATAHEAD')
         self.meta_path = os.path.join(self.directory, 'META')
         self.data_path = os.path.join(self.directory, 'DATA')
 
-        with open(self.head_path, 'rb') as f:
-            self.head = pbarray_pb2.Head.FromString(f.read())
+        # Open headers
+        with open(self.meta_head_path, 'rb') as f:
+            self.meta_head = pbarray_pb2.MetaHead.FromString(f.read())
+            
+        with open(self.data_head_path, 'rb') as f:
+            self.data_head = pbarray_pb2.DataHead.FromString(f.read())
 
-        self.sizes = numpy.array(self.head.items)
-        sizes = [0]
-        sizes.extend(list(self.head.items))
-        self.offsets = numpy.cumsum(sizes)[0:-1]
+            
+        assert len(self.meta_head.items) == len(self.data_head.items)
+        self.num_items = len(self.meta_head.items)
+            
+        self.meta_offsets = numpy.array(self.meta_head.items)
+        self.data_offsets = numpy.array(self.data_head.items)
+        
+        # add zero to beginning and drop end value
+        self.meta_cumulative_offsets = numpy.cumsum(numpy.hstack((0, self.meta_offsets)))[0:-1]
+        self.data_cumulative_offsets = numpy.cumsum(numpy.hstack((0, self.data_offsets)))[0:-1]
 
-        with open(self.meta_path, 'rb') as f:
-            self.meta = pbarray_pb2.Meta.FromString(f.read())
-
+        self.meta_file = open(self.meta_path, 'rb')
         self.data_file = open(self.data_path, 'rb')
 
-        self.num_items = len(self.sizes)
 
     def Get(self, id):
         '''Get items from the `database`.
-
         Returns
         -------
         data : DataItem
@@ -96,8 +101,12 @@ class PBArray(object):
         meta : MetaItem
             MetaItem from `pbarray_pb2`.
         '''
-        self.data_file.seek(self.offsets[id])
-        string = self.data_file.read(self.sizes[id])
-        data = pbarray_pb2.DataItem.FromString(string)
-        meta = self.meta.items[id]
+        self.meta_file.seek(self.meta_cumulative_offsets[id])
+        meta_string = self.meta_file.read(self.meta_offsets[id])
+        meta = pbarray_pb2.MetaItem.FromString(meta_string)
+        
+        self.data_file.seek(self.data_cumulative_offsets[id])
+        data_string = self.data_file.read(self.data_offsets[id])
+        data = pbarray_pb2.DataItem.FromString(data_string)
+
         return (data, meta)

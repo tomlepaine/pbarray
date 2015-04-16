@@ -18,22 +18,22 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='pbarray.proto',
   package='pbarray',
-  serialized_pb=_b('\n\rpbarray.proto\x12\x07pbarray\"\x15\n\x04Head\x12\r\n\x05items\x18\x01 \x03(\x05\"(\n\x04Meta\x12 \n\x05items\x18\x01 \x03(\x0b\x32\x11.pbarray.MetaItem\"g\n\x08MetaItem\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\r\n\x05width\x18\x02 \x01(\x05\x12\x0e\n\x06height\x18\x03 \x01(\x05\x12\r\n\x05label\x18\x04 \x01(\x05\x12\x1b\n\x05\x62oxes\x18\x05 \x03(\x0b\x32\x0c.pbarray.Box\"\x18\n\x08\x44\x61taItem\x12\x0c\n\x04jpeg\x18\x01 \x01(\x0c\"T\n\x03\x42ox\x12\x0f\n\x07start_x\x18\x01 \x01(\x05\x12\x0f\n\x07start_y\x18\x02 \x01(\x05\x12\r\n\x05\x65nd_x\x18\x03 \x01(\x05\x12\r\n\x05\x65nd_y\x18\x04 \x01(\x05\x12\r\n\x05label\x18\x05 \x01(\x05')
+  serialized_pb=_b('\n\rpbarray.proto\x12\x07pbarray\"\x19\n\x08MetaHead\x12\r\n\x05items\x18\x01 \x03(\x05\"\x19\n\x08\x44\x61taHead\x12\r\n\x05items\x18\x01 \x03(\x05\"~\n\x08MetaItem\x12\x10\n\x08\x66ilename\x18\x01 \x01(\t\x12\r\n\x05width\x18\x02 \x01(\x05\x12\x0e\n\x06height\x18\x03 \x01(\x05\x12\x10\n\x08label_id\x18\x04 \x01(\x05\x12\x1b\n\x05\x62oxes\x18\x05 \x03(\x0b\x32\x0c.pbarray.Box\x12\x12\n\nlabel_name\x18\x06 \x01(\t\"\x18\n\x08\x44\x61taItem\x12\x0c\n\x04jpeg\x18\x01 \x01(\x0c\"T\n\x03\x42ox\x12\x0f\n\x07start_x\x18\x01 \x01(\x05\x12\x0f\n\x07start_y\x18\x02 \x01(\x05\x12\r\n\x05\x65nd_x\x18\x03 \x01(\x05\x12\r\n\x05\x65nd_y\x18\x04 \x01(\x05\x12\r\n\x05label\x18\x05 \x01(\x05')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
 
-_HEAD = _descriptor.Descriptor(
-  name='Head',
-  full_name='pbarray.Head',
+_METAHEAD = _descriptor.Descriptor(
+  name='MetaHead',
+  full_name='pbarray.MetaHead',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='items', full_name='pbarray.Head.items', index=0,
+      name='items', full_name='pbarray.MetaHead.items', index=0,
       number=1, type=5, cpp_type=1, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -51,20 +51,20 @@ _HEAD = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=26,
-  serialized_end=47,
+  serialized_end=51,
 )
 
 
-_META = _descriptor.Descriptor(
-  name='Meta',
-  full_name='pbarray.Meta',
+_DATAHEAD = _descriptor.Descriptor(
+  name='DataHead',
+  full_name='pbarray.DataHead',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='items', full_name='pbarray.Meta.items', index=0,
-      number=1, type=11, cpp_type=10, label=3,
+      name='items', full_name='pbarray.DataHead.items', index=0,
+      number=1, type=5, cpp_type=1, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -80,8 +80,8 @@ _META = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=49,
-  serialized_end=89,
+  serialized_start=53,
+  serialized_end=78,
 )
 
 
@@ -114,7 +114,7 @@ _METAITEM = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='label', full_name='pbarray.MetaItem.label', index=3,
+      name='label_id', full_name='pbarray.MetaItem.label_id', index=3,
       number=4, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -124,6 +124,13 @@ _METAITEM = _descriptor.Descriptor(
       name='boxes', full_name='pbarray.MetaItem.boxes', index=4,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='label_name', full_name='pbarray.MetaItem.label_name', index=5,
+      number=6, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -138,8 +145,8 @@ _METAITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=91,
-  serialized_end=194,
+  serialized_start=80,
+  serialized_end=206,
 )
 
 
@@ -168,8 +175,8 @@ _DATAITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=196,
-  serialized_end=220,
+  serialized_start=208,
+  serialized_end=232,
 )
 
 
@@ -226,31 +233,30 @@ _BOX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=222,
-  serialized_end=306,
+  serialized_start=234,
+  serialized_end=318,
 )
 
-_META.fields_by_name['items'].message_type = _METAITEM
 _METAITEM.fields_by_name['boxes'].message_type = _BOX
-DESCRIPTOR.message_types_by_name['Head'] = _HEAD
-DESCRIPTOR.message_types_by_name['Meta'] = _META
+DESCRIPTOR.message_types_by_name['MetaHead'] = _METAHEAD
+DESCRIPTOR.message_types_by_name['DataHead'] = _DATAHEAD
 DESCRIPTOR.message_types_by_name['MetaItem'] = _METAITEM
 DESCRIPTOR.message_types_by_name['DataItem'] = _DATAITEM
 DESCRIPTOR.message_types_by_name['Box'] = _BOX
 
-Head = _reflection.GeneratedProtocolMessageType('Head', (_message.Message,), dict(
-  DESCRIPTOR = _HEAD,
+MetaHead = _reflection.GeneratedProtocolMessageType('MetaHead', (_message.Message,), dict(
+  DESCRIPTOR = _METAHEAD,
   __module__ = 'pbarray_pb2'
-  # @@protoc_insertion_point(class_scope:pbarray.Head)
+  # @@protoc_insertion_point(class_scope:pbarray.MetaHead)
   ))
-_sym_db.RegisterMessage(Head)
+_sym_db.RegisterMessage(MetaHead)
 
-Meta = _reflection.GeneratedProtocolMessageType('Meta', (_message.Message,), dict(
-  DESCRIPTOR = _META,
+DataHead = _reflection.GeneratedProtocolMessageType('DataHead', (_message.Message,), dict(
+  DESCRIPTOR = _DATAHEAD,
   __module__ = 'pbarray_pb2'
-  # @@protoc_insertion_point(class_scope:pbarray.Meta)
+  # @@protoc_insertion_point(class_scope:pbarray.DataHead)
   ))
-_sym_db.RegisterMessage(Meta)
+_sym_db.RegisterMessage(DataHead)
 
 MetaItem = _reflection.GeneratedProtocolMessageType('MetaItem', (_message.Message,), dict(
   DESCRIPTOR = _METAITEM,
