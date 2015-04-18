@@ -14,6 +14,9 @@ class PBArrayWriter(object):
     '''
     def __init__(self, directory):
         self.directory = directory
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory)
+
         self.meta_head = pbarray_pb2.MetaHead()
         self.data_head = pbarray_pb2.DataHead()
 
